@@ -48,21 +48,24 @@
       margin: 0 auto;
     }
 
+    /* TV 프레임을 가장 위 레이어로 */
     .tv-frame {
       width: 100%;
       display: block;
+      position: relative;
+      z-index: 2;         /* ★ 프레임이 제일 위 */
     }
 
-    /* TV 안쪽 화면 영역 (화이트 컷된 부분에 맞게 비율 조정) */
+    /* TV 안쪽 화면 영역 (GIF) */
     .tv-screen {
       position: absolute;
-      /* 이 값들은 실제 이미지 보고 미세 조정하면 됨 */
       top: 13%;
       left: 9.5%;
       width: 81%;
       height: 63%;
       overflow: hidden;
       border-radius: 10px;
+      z-index: 1;         /* ★ 프레임보다 뒤 */
     }
 
     .tv-screen img {
