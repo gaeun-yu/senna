@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>About Ayrton Senna</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Shadows Into Light 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #050505;
+      color: #f5f5f5;
+      font-family: Pretendard;
+    }
+
+    .intro-hero {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    .hero-title {
+      font-family: "Shadows Into Light", system-ui, sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: 0.12em;
+      margin-bottom: 2.5rem;
+    }
+
+    .tv-wrapper {
+      position: relative;
+      width: min(520px, 80vw);
+      margin: 0 auto;
+    }
+
+    .tv-frame {
+      width: 100%;
+      display: block;
+    }
+
+    /* TV 안쪽 화면 영역 (화이트 컷된 부분에 맞게 비율 조정) */
+    .tv-screen {
+      position: absolute;
+      /* 이 값들은 실제 이미지 보고 미세 조정하면 됨 */
+      top: 13%;
+      left: 9.5%;
+      width: 81%;
+      height: 63%;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .tv-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .play-btn {
+      margin-top: 2.8rem;
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .play-btn img {
+      display: block;
+      width: 180px;
+      max-width: 40vw;
+      height: auto;
+    }
+
+    .play-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.05);
+    }
+
+    .play-btn:active {
+      transform: translateY(0) scale(0.98);
+      filter: brightness(0.95);
+    }
+
+    /* 반응형 - 세로 긴 화면에서 위아래 여백 조금 줄이기 */
+    @media (max-height: 680px) {
+      .intro-hero {
+        padding-top: 2rem;
+        padding-bottom: 2.5rem;
+      }
+    }
+
+        /* CHAPTER 1 */
+    #chapter-1 {
+      display: none;
+    }
+    #chapter-1.active {
+      display: block;
+    }
+    #intro,
+    #chapter-1 {
+      transition: opacity 0.5s ease;
+    }
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* CHAPTER 1 전체 */
+    .chapter-one {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #050505;
+    }
+
+    .chapter-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56px;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 50;
+    }
+
+    .header-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;      /* 가운데 정렬 (1챕터처럼) */
+      padding: 0 40px;
+    }
+
+    .header-title {
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+
+    /* GIF 뒤 레이어 */
+    .gif-layer {
+      position: absolute;
+      top: 12px;      /* 화면 위에서 얼마나 떨어질지 */
+      right: 0px;    /* 오른쪽에서 얼마나 떨어질지 */
+      width: 800px;   /* GIF 가로 크기 */
+      height: 600px;  /* GIF 세로 크기 */
+      overflow: hidden;
+      z-index: 1;     /* 콜라쥬보다 뒤로 보내려면 콜라쥬 z-index보다 작게 */
+    }
+
+    .gif-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 콜라주 중간 레이어 */
+    .collage-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    .collage-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;        /* 화면 꽉 채우기 */
+    }
+
+    /* 세나 컷아웃 버튼 레이어 */
+    .senna-cutout-btn {
+      position: absolute;
+      left: 24%;
+      bottom: -60px;
+      background: none;
+      border: none;
+      z-index: 3;
+      animation: float 1.2s ease-in-out infinite;
+    }
+    .senna-cutout-btn img {
+      width: 14vw;
+      min-width: 140px;
+    }
+
+    /* 흔들리는 애니메이션 */
+    @keyframes float {
+      0% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
+      100% { transform: translateY(0) rotate(-2deg); }
+    }
+    /* 깜빡이는 CLICK 이미지 */
+    /* 기본 상태: 챕터1이 아닐 때는 안 보이고, 애니메이션도 안 돌림 */
+    .click-hint {
+      position: absolute;
+      left: 26%;
+      bottom: 22%;
+      width: 200px;
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* 챕터1이 active일 때만 깜빡이기 시작 */
+    .chapter-one.active .click-hint {
+      animation: clickBlink 1.2s ease-in-out infinite;
+      opacity: 1;
+    }
+
+    @keyframes clickBlink {
+      0%, 100% { opacity: 0; transform: scale(0.95) rotate(-2deg); }
+      50%      { opacity: 1; transform: scale(1.05) rotate(2deg); }
+    }
+    /* 초기: 화면 밖 오른쪽에 숨김 */
+    .brazil-sticker {
+      position: absolute;          /* 원하는 대로 조정 */
+      right: -300px;      /* 화면 밖으로 날려놓기 */
+      width: 480px;       /* 크기 조정 가능 */
+      opacity: 0;
+      transform: rotate(15deg);
+      transition: all 0.8s ease;
+      z-index: 5;         /* 세나 컷아웃 위 */
+    }
+
+    /* 붙을 때: 화면 안쪽 고정 위치 */
+    .brazil-sticker.active {
+      right: 4%; 
+      bottom: 16%;         /* 붙는 위치 */
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+
+    /* 오버레이 전체 */
+    .senna-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease;
+      z-index: 10;
+    }
+    /* 오버레이 열렸을 때만 세나 버튼을 최상단으로 */
+    .overlay-open .senna-cutout-btn {
+      z-index: 11;       /* 오버레이(10)보다 위로 */
+    }
+
+    /* 동시에 클릭 이미지는 숨기고 싶으면 */
+    .overlay-open .click-hint {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .senna-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* 중앙 캔버스 */
+    .overlay-container {
+      position: relative;
+      width: 1200px;
+      max-width: 120vw;
+      height: 780px;
+      max-height: 120vh;
+    }
+
+    /* 닫기 버튼 */
+    .overlay-close {
+      position: absolute;
+      top: 140px;
+      right: 60px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 32px !important;
+      font-weight: 300;
+      cursor: pointer;
+      z-index: 9999;
+      opacity: 0.8;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    
+
+    /* 왼쪽 카드 */
+    .ov-card {
+      position: absolute;
+      width: 460px;
+      top: 0px;
+      left: 0px;
+    }
+    /* 오른쪽 전체 영역 (로고+텍스트, 모나코+텍스트가 들어가는 박스) */
+    .ov-right-area {
+      position: absolute;
+      top: 130px;
+      right: 40px;
+      width: 850px;               /* 필요하면 조절 */
+      color: #fff;
+      font-family: Pretendard, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* 각 행 공통 */
+    .ov-row {
+      display: flex;
+      align-items: center;
+    }
+
+    /* 1열: TOLEMAN + 텍스트 */
+    .ov-row-top {
+      margin-top: 80px;
+      margin-bottom: 60px;
+    }
+
+    .ov-toleman {
+      width: 280px;
+      margin-top: 30px;
+      margin-right: 16px;
+    }
+
+    .ov-title-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-left: 160px;
+    }
+
+    /* 2열: 모나코 + 본문 텍스트 */
+    .ov-row-bottom {
+      align-items: flex-start;
+    }
+
+    .ov-monaco {
+      width: 420px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      margin-right: 18px;
+    }
+
+    .ov-text {
+      flex: 1;
+      padding: 16px 18px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .ov-text h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .ov-quote {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+   
+    /* 전체 네비게이션 박스 */
+    .nav-btns {
+      position: fixed;
+      bottom: 0;         /* 📌 화면 바닥에 붙임 */
+      left: 0;
+      width: 100%;       /* 화면 전체 폭 사용 */
+      display: flex;
+      justify-content: space-between; /* back = 왼쪽 / forward = 오른쪽 */
+      align-items: flex-end;
+      padding: 0 30px 20px; /* 좌우 30px, 아래 20px 여백 */
+      z-index: 9999;     /* 📌 최상단 요소 */
+      pointer-events: none; /* 기본 클릭 막기 */
+    }
+
+    /* 개별 버튼만 클릭 가능하게 */
+    .nav-btns a {
+      pointer-events: all;
+      display: block;
+    }
+
+    /* 버튼 크기 조절 */
+    .nav-btns img {
+      height: 50px;  /* 이미지 크기 조절 */
+      opacity: 0.9;
+      transition: transform .2s, opacity .2s ease;
+    }
+
+    /* hover 효과 */
+    .nav-btns img:hover {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+    /* ----- 페이지 전환 효과 ----- */
+    body.page-transition {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgAudio" src="audio_rain.mp3" loop></audio>
+  <section id="intro" class="intro-hero">
+    <h1 class="hero-title">ABOUT AYRTON SENNA</h1>
+
+    <div class="tv-wrapper">
+      <!-- TV 프레임 -->
+      <img
+        class="tv-frame"
+        src="intro_tv_frame.png"
+        alt="Old Panasonic TV"
+      />
+
+      <!-- TV 안에 들어갈 GIF -->
+      <div class="tv-screen">
+        <img
+          src="intro_video.gif"
+          alt="Onboard footage"
+        />
+      </div>
+    </div>
+
+    <!-- 플레이 버튼 -->
+    <button class="play-btn" id="introPlayBtn">
+      <img src="play_btn.png" alt="Play" />
+    </button>
+  </section>
+
+      <!-- INTRO 아래에 이어지는 첫 번째 화면 -->
+    <section id="chapter-1" class="chapter-one">
+      <<header class="chapter-header">
+      <div class="header-inner">
+        <span class="header-title">
+          레이싱의 시작과 ‘비의 기적’ (1960년 ~ 1985년)
+        </span>
+      </div>
+    </header>
+
+      <!-- GIF 레이어 (맨 뒤) -->
+      <div class="gif-layer">
+        <img src="ch1_video.gif" alt="" />
+      </div>
+
+      <!-- 콜라주 레이어 (중간) -->
+      <div class="collage-layer">
+        <img src="ch1_collage.png" alt="콜라주" />
+      </div>
+
+      <!-- 세나 버튼 레이어 (맨 앞) -->
+      <button class="senna-cutout-btn">
+        <img src="ch1_click_senna.png" alt="클릭 세나" />
+      </button>
+
+       <button class="senna-cutout-btn">
+      <img src="/mnt/data/ch1_click_senna.png" alt="세나 컷아웃">
+      
+      </button>
+      <!-- 깜빡이는 CLICK 문구 -->
+      <img src="ch1_click.png" class="click-hint" alt="CLICK 힌트">
+      <img src="ch1_brazil.png" alt="브라질 스티커" class="brazil-sticker">
+
+    </section>
+    <!-- 세나 설명 오버레이 -->
+  <div id="sennaOverlay" class="senna-overlay">
+      <div class="overlay-container">
+        <button class="overlay-close">&times;</button>
+
+        <!-- 왼쪽 카드 그대로 -->
+        <img src="ch1_explain.png" class="ov-card" />
+
+        <!-- 오른쪽 영역 전체를 묶는 래퍼 -->
+        <div class="ov-right-area">
+          <!-- 1열: TOLEMAN + 제목 텍스트 -->
+          <div class="ov-row ov-row-top">
+            <img src="ch1_toleman.png" class="ov-toleman" />
+            <span class="ov-title-text">1984년 톨먼에서 F1 데뷔</span>
+          </div>
+
+          <!-- 2열: 모나코 사진 + 본문 텍스트 -->
+          <div class="ov-row ov-row-bottom">
+            <img src="ch1_monaco.png" class="ov-monaco" />
+
+            <div class="ov-text">
+              <h3>폭우 속에 시작된 1984 모나코 그랑프리</h3>
+              <p>
+                폴시드는 알랭 프로스트, 세나는 13위에서 출발했지만 폭우 속에서 놀라운 페이스를 보여주며
+                순위를 빠르게 끌어올린다. 거센 빗줄기 속에서도 카트를 몰던 어린 시절처럼, 그는 물살을
+                가르며 앞차들을 하나씩 추월해 갔다.
+              </p>
+              <p>
+                레이스는 결국 중단되었지만, 세나는 2위라는 결과 이상으로 팬들과 관계자들에게 강렬한
+                인상을 남겼고, 이 경기를 계기로 ‘비의 사나이’라는 별명이 본격적으로 자리잡기 시작했다.
+              </p>
+              <p class="ov-quote">
+                “He's not about to be World Champion this year, he will undoubtedly be World Champion in the future.”  
+                – 제임스 헌트, 1984 모나코 GP 해설 중
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- Navigation Buttons (공통) -->
+  <div class="nav-btns">
+    <a href="chapter0.html" class="btn-back">
+      <img src="btn_back.png" alt="Back">
+    </a>
+
+    <a href="chapter2.html" class="btn-forward">
+      <img src="btn_forward.png" alt="Forward">
+    </a>
+  </div>
+  <script>
+      const playBtn = document.querySelector("#introPlayBtn");
+      const intro = document.getElementById("intro");
+      const chapter1 = document.getElementById("chapter-1");
+      const bgAudio = document.getElementById("bgAudio");
+      const sticker = document.querySelector(".brazil-sticker");
+
+      // 🎵 오디오 페이드인
+      function fadeInAudio(audioEl, duration) {
+        if (!audioEl) return;
+
+        const targetVolume = 0.8;
+        const stepTime = 80;
+        const steps = duration / stepTime;
+        const volumeStep = targetVolume / steps;
+
+        audioEl.volume = 0;
+        audioEl.play().catch(() => {
+          console.log("Audio play blocked by browser.");
+        });
+
+        const fade = setInterval(() => {
+          let v = audioEl.volume + volumeStep;
+          if (v >= targetVolume) {
+            audioEl.volume = targetVolume;
+            clearInterval(fade);
+          } else {
+            audioEl.volume = v;
+          }
+        }, stepTime);
+      }
+
+      // ⭐ 인트로 → 챕터1 전환 + 오디오 + 스티커
+      playBtn.addEventListener("click", () => {
+        // 1) 인트로 페이드아웃
+        intro.classList.add("hidden");
+
+        setTimeout(() => {
+          intro.style.display = "none";
+
+          // 2) 챕터1 보이게
+          chapter1.classList.add("active", "visible");
+          window.scrollTo({ top: 0, behavior: "auto" });
+
+          // 3) 오디오 페이드인
+          fadeInAudio(bgAudio, 8000);
+
+          // 4) 브라질 스티커 등장
+          setTimeout(() => {
+            sticker.classList.add("active");
+          }, 300);
+        }, 500);
+      });
+
+      // ⭐ 세나 오버레이
+      const sennaBtn = document.querySelector(".senna-cutout-btn");
+      const sennaOverlay = document.getElementById("sennaOverlay");
+      const overlayClose = document.querySelector(".overlay-close");
+
+      if (sennaBtn) {
+        sennaBtn.addEventListener("click", () => {
+          sennaOverlay.classList.add("visible");
+          document.body.classList.add("overlay-open");
+        });
+      }
+
+      if (overlayClose) {
+        overlayClose.addEventListener("click", () => {
+          sennaOverlay.classList.remove("visible");
+          document.body.classList.remove("overlay-open");
+        });
+      }
+
+      // 배경 클릭으로 닫기
+      sennaOverlay.addEventListener("click", (e) => {
+        if (e.target === sennaOverlay) {
+          sennaOverlay.classList.remove("visible");
+          document.body.classList.remove("overlay-open");
+        }
+      });
+
+      // ⭐ 페이지 이동: 페이드아웃 효과
+      const forwardBtn = document.querySelector(".btn-forward");
+      const backBtn = document.querySelector(".btn-back");
+
+      if (forwardBtn) {
+        forwardBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.body.classList.add("page-transition");
+          setTimeout(() => {
+            window.location.href = "chapter2.html";
+          }, 600);
+        });
+      }
+
+      if (backBtn) {
+        backBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          document.body.classList.add("page-transition");
+          setTimeout(() => {
+            window.location.href = "chapter0.html";
+          }, 600);
+        });
+      }
+
+      function fadeOutAudio(audioEl, duration, callback) {
+      if (!audioEl) return callback();
+
+      const stepTime = 60; 
+      const steps = duration / stepTime;
+      const volumeStep = audioEl.volume / steps;
+
+      const fade = setInterval(() => {
+        let newVol = audioEl.volume - volumeStep;
+        if (newVol <= 0) {
+          audioEl.volume = 0;
+          clearInterval(fade);
+          if (callback) callback();  
+        } else {
+          audioEl.volume = newVol;
+        }
+      }, stepTime);
+    }
+
+    </script>
+
+</body>
+</html>
