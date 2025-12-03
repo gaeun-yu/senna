@@ -1,16 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8">
   <title>About Ayrton Senna</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- Shadows Into Light 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600&family=Shadows+Into+Light&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
+    /* ---------------------------------
+    * 공통 스타일 및 설정 (스크롤 제거)
+    * --------------------------------- */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -18,122 +23,79 @@
     }
 
     body {
-      min-height: 100vh;
+      height: 100vh;
+      width: 100vw;
       background: #050505;
       color: #f5f5f5;
       font-family: Pretendard;
-    }
-
-    .intro-hero {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
-    }
-
-    .hero-title {
-      font-family: "Shadows Into Light", system-ui, sans-serif;
-      font-size: clamp(1.8rem, 3vw, 2.4rem);
-      letter-spacing: 0.12em;
-      margin-bottom: 2.5rem;
-    }
-
-    .tv-wrapper {
+      overflow: hidden; /* ★★★ 스크롤 제거 */
       position: relative;
-      width: min(520px, 80vw);
-      margin: 0 auto;
     }
-
-    /* TV 프레임을 가장 위 레이어로 */
-    .tv-frame {
-      width: 100%;
-      display: block;
-      position: relative;
-      z-index: 2;         /* ★ 프레임이 제일 위 */
-    }
-
-    /* TV 안쪽 화면 영역 (GIF) */
-    .tv-screen {
-      position: absolute;
-      top: 13%;
-      left: 9.5%;
-      width: 81%;
-      height: 63%;
+    
+    /* 섹션 공통: 전체 화면을 차지하며 절대 위치 사용 */
+    .section {
+      width: 100vw;
+      height: 100vh;
+      position: absolute; 
+      top: 0;
+      left: 0;
       overflow: hidden;
-      border-radius: 10px;
-      z-index: 1;         /* ★ 프레임보다 뒤 */
+      display: none; /* 기본 숨김 */
+      opacity: 1; 
+      transition: opacity 0.6s ease;
+    }
+    .section.active {
+      display: block; /* 활성화된 섹션만 표시 */
     }
 
-    .tv-screen img {
+    /* 페이지 전환 효과 */
+    body.page-transition .section.active {
+        opacity: 0; 
+    }
+    body.page-transition .section:not(.active) {
+        opacity: 0; 
+    }
+
+    /* ---------------------------------
+    * Navigation Buttons (공통)
+    * --------------------------------- */
+    .nav-btns {
+      position: fixed;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .play-btn {
-      margin-top: 2.8rem;
-      border: none;
-      background: transparent;
-      padding: 0;
-      cursor: pointer;
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-
-    .play-btn img {
-      display: block;
-      width: 180px;
-      max-width: 40vw;
-      height: auto;
-    }
-
-    .play-btn:hover {
-      transform: translateY(-2px) scale(1.03);
-      filter: brightness(1.05);
-    }
-
-    .play-btn:active {
-      transform: translateY(0) scale(0.98);
-      filter: brightness(0.95);
-    }
-
-    /* 반응형 - 세로 긴 화면에서 위아래 여백 조금 줄이기 */
-    @media (max-height: 680px) {
-      .intro-hero {
-        padding-top: 2rem;
-        padding-bottom: 2.5rem;
-      }
-    }
-
-        /* CHAPTER 1 */
-    #chapter-1 {
-      display: none;
-    }
-    #chapter-1.active {
-      display: block;
-    }
-    #intro,
-    #chapter-1 {
-      transition: opacity 0.5s ease;
-    }
-    .hidden {
-      opacity: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 30px 20px;
+      z-index: 9999;
       pointer-events: none;
     }
-
-    /* CHAPTER 1 전체 */
-    .chapter-one {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      background: #050505;
+    .nav-btns a {
+      pointer-events: all;
+      display: block;
+    }
+    .nav-btns img {
+      height: 50px;
+      opacity: 0.9;
+      transition: transform .2s, opacity .2s ease;
+    }
+    .nav-btns img:hover {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+    /* 인트로에서는 Nav 버튼 숨김 */
+    #intro .nav-btns {
+        display: none;
+    }
+    /* 챕터2의 Nav Forward 버튼 (챕터 3이 없으므로 숨김) */
+    #chapter-2 .btn-forward {
+      display: none;
     }
 
+    /* ---------------------------------
+    * Header (공통)
+    * --------------------------------- */
     .chapter-header {
       position: fixed;
       top: 0;
@@ -143,40 +105,112 @@
       background: rgba(0, 0, 0, 0.9);
       z-index: 50;
     }
-
     .header-inner {
       height: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;      /* 가운데 정렬 (1챕터처럼) */
+      justify-content: center;
       padding: 0 40px;
     }
-
     .header-title {
       color: #ffffff;
       font-size: 18px;
       font-weight: 500;
     }
 
-
-    /* GIF 뒤 레이어 */
+    /* ---------------------------------
+    * 1. INTRO (index.html 원본)
+    * --------------------------------- */
+    .intro-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+    .hero-title {
+      font-family: "Shadows Into Light", system-ui, sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: 0.12em;
+      margin-bottom: 40px;
+      margin-top: 60px;
+    }
+    .tv-wrapper {
+      position: relative;
+      width: min(520px, 80vw);
+      margin: 0 auto;
+    }
+    .tv-frame {
+      width: 100%;
+      display: block;
+      position: relative;
+      z-index: 2;
+    }
+    .tv-screen {
+      position: absolute;
+      top: 13%;
+      left: 9.5%;
+      width: 81%;
+      height: 63%;
+      overflow: hidden;
+      border-radius: 10px;
+      z-index: 1;
+    }
+    .tv-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .play-btn {
+      margin-top: 2.8rem;
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .play-btn img {
+      display: block;
+      width: 180px;
+      max-width: 40vw;
+      height: auto;
+    }
+    .play-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.05);
+    }
+    .play-btn:active {
+      transform: translateY(0) scale(0.98);
+      filter: brightness(0.95);
+    }
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    
+    /* ---------------------------------
+    * 2. CHAPTER 1 (index.html 원본)
+    * --------------------------------- */
+    .chapter-one {
+      background: #050505;
+    }
     .gif-layer {
       position: absolute;
-      top: 12px;      /* 화면 위에서 얼마나 떨어질지 */
-      right: 0px;    /* 오른쪽에서 얼마나 떨어질지 */
-      width: 800px;   /* GIF 가로 크기 */
-      height: 600px;  /* GIF 세로 크기 */
+      top: 12px;
+      right: 0px;
+      width: 800px;
+      height: 600px;
       overflow: hidden;
-      z-index: 1;     /* 콜라쥬보다 뒤로 보내려면 콜라쥬 z-index보다 작게 */
+      z-index: 1;
     }
-
     .gif-layer img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
-    /* 콜라주 중간 레이어 */
     .collage-layer {
       position: absolute;
       inset: 0;
@@ -185,10 +219,8 @@
     .collage-layer img {
       width: 100%;
       height: 100%;
-      object-fit: cover;        /* 화면 꽉 채우기 */
+      object-fit: cover;
     }
-
-    /* 세나 컷아웃 버튼 레이어 */
     .senna-cutout-btn {
       position: absolute;
       left: 24%;
@@ -197,20 +229,19 @@
       border: none;
       z-index: 3;
       animation: float 1.2s ease-in-out infinite;
+      cursor: pointer;
+      padding: 0; /* 버튼 패딩 제거 */
     }
     .senna-cutout-btn img {
       width: 14vw;
       min-width: 140px;
+      display: block; /* 이미지 블록 처리 */
     }
-
-    /* 흔들리는 애니메이션 */
     @keyframes float {
       0% { transform: translateY(0) rotate(-2deg); }
       50% { transform: translateY(-6px) rotate(2deg); }
       100% { transform: translateY(0) rotate(-2deg); }
     }
-    /* 깜빡이는 CLICK 이미지 */
-    /* 기본 상태: 챕터1이 아닐 때는 안 보이고, 애니메이션도 안 돌림 */
     .click-hint {
       position: absolute;
       left: 26%;
@@ -220,37 +251,91 @@
       opacity: 0;
       pointer-events: none;
     }
-
-    /* 챕터1이 active일 때만 깜빡이기 시작 */
     .chapter-one.active .click-hint {
       animation: clickBlink 1.2s ease-in-out infinite;
       opacity: 1;
     }
-
     @keyframes clickBlink {
       0%, 100% { opacity: 0; transform: scale(0.95) rotate(-2deg); }
       50%      { opacity: 1; transform: scale(1.05) rotate(2deg); }
     }
-    /* 초기: 화면 밖 오른쪽에 숨김 */
-    .brazil-sticker {
-      position: absolute;          /* 원하는 대로 조정 */
-      right: -300px;      /* 화면 밖으로 날려놓기 */
-      width: 480px;       /* 크기 조정 가능 */
-      opacity: 0;
-      transform: rotate(15deg);
-      transition: all 0.8s ease;
-      z-index: 5;         /* 세나 컷아웃 위 */
+    
+    /* 브라질 스티커 버튼 스타일 */
+    .brazil-sticker-btn {
+        position: absolute;
+        right: -300px;
+        width: 480px;
+        opacity: 0;
+        transform: rotate(15deg);
+        transition: all 0.8s ease;
+        z-index: 5;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
     }
 
-    /* 붙을 때: 화면 안쪽 고정 위치 */
-    .brazil-sticker.active {
-      right: 4%; 
-      bottom: 16%;         /* 붙는 위치 */
-      opacity: 1;
-      transform: rotate(0deg);
+    .brazil-sticker-btn.active {
+        right: 4%; 
+        bottom: 16%;
+        opacity: 1;
+        transform: rotate(0deg);
+    }
+    
+    .brazil-sticker-btn img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    /* index.html - <style> 섹션 내부 */
+
+    /* ▼ [2] 세나 기본 정보 오버레이 스타일 추가 ▼ */
+    .info-overlay {
+        position: absolute;
+        /* 스티커가 우측 하단 (right: 4%, bottom: 16%)에 있으므로, 오버레이는 그 근처에 배치 */
+        right: 50px;       
+        bottom: 430px;     
+        z-index: 99;       /* 다른 요소 위에 뜨도록 설정 */
+        display: none;     /* 초기 숨김 */
+        background: #f1e5d2; /* ch1_info.png의 배경색과 유사하게 설정 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        padding: 10px;
+        border-radius: 4px;
+        /* 등장/사라짐 효과 */
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    /* 오버레이 전체 */
+    .info-overlay.visible {
+        opacity: 1;
+        transform: scale(1);
+        display: block;
+    }
+
+    .info-overlay img {
+        display: block;
+        width: 270px; /* 적절한 크기 설정 */
+        height: auto;
+    }
+
+    /* 닫기 버튼 스타일 */
+    .info-close {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        background: none;
+        border: none;
+        color: #333;
+        font-size: 23px;
+        cursor: pointer;
+    }
+    .overlay-open .senna-cutout-btn {
+        z-index: 11;
+    }
+
+
+    /* 오버레이 공통 */
     .senna-overlay {
       position: fixed;
       inset: 0;
@@ -263,23 +348,14 @@
       transition: opacity .4s ease;
       z-index: 10;
     }
-    /* 오버레이 열렸을 때만 세나 버튼을 최상단으로 */
-    .overlay-open .senna-cutout-btn {
-      z-index: 11;       /* 오버레이(10)보다 위로 */
-    }
-
-    /* 동시에 클릭 이미지는 숨기고 싶으면 */
     .overlay-open .click-hint {
       opacity: 0;
       pointer-events: none;
     }
-
     .senna-overlay.visible {
       opacity: 1;
       pointer-events: auto;
     }
-
-    /* 중앙 캔버스 */
     .overlay-container {
       position: relative;
       width: 1200px;
@@ -287,8 +363,6 @@
       height: 780px;
       max-height: 120vh;
     }
-
-    /* 닫기 버튼 */
     .overlay-close {
       position: absolute;
       top: 140px;
@@ -303,132 +377,281 @@
       opacity: 0.8;
       transition: opacity .2s ease, transform .2s ease;
     }
-    
-
-    /* 왼쪽 카드 */
     .ov-card {
       position: absolute;
       width: 460px;
       top: 0px;
       left: 0px;
     }
-    /* 오른쪽 전체 영역 (로고+텍스트, 모나코+텍스트가 들어가는 박스) */
     .ov-right-area {
       position: absolute;
       top: 130px;
       right: 40px;
-      width: 850px;               /* 필요하면 조절 */
+      width: 850px;
       color: #fff;
       font-family: Pretendard, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
-
-    /* 각 행 공통 */
     .ov-row {
       display: flex;
       align-items: center;
     }
-
-    /* 1열: TOLEMAN + 텍스트 */
     .ov-row-top {
       margin-top: 80px;
       margin-bottom: 60px;
     }
-
     .ov-toleman {
       width: 280px;
       margin-top: 30px;
       margin-right: 16px;
     }
-
     .ov-title-text {
       font-size: 1.1rem;
       font-weight: 600;
       margin-left: 160px;
     }
-
-    /* 2열: 모나코 + 본문 텍스트 */
     .ov-row-bottom {
       align-items: flex-start;
     }
-
     .ov-monaco {
       width: 420px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.6);
       margin-right: 18px;
     }
-
     .ov-text {
       flex: 1;
       padding: 16px 18px;
       font-size: 0.9rem;
       line-height: 1.6;
     }
-
     .ov-text h3 {
       font-size: 1rem;
       margin-bottom: 8px;
     }
-
     .ov-quote {
       margin-top: 10px;
       font-size: 0.8rem;
       opacity: 0.9;
     }
-
    
-    /* 전체 네비게이션 박스 */
-    .nav-btns {
-      position: fixed;
-      bottom: 0;         /* 📌 화면 바닥에 붙임 */
-      left: 0;
-      width: 100%;       /* 화면 전체 폭 사용 */
-      display: flex;
-      justify-content: space-between; /* back = 왼쪽 / forward = 오른쪽 */
-      align-items: flex-end;
-      padding: 0 30px 20px; /* 좌우 30px, 아래 20px 여백 */
-      z-index: 9999;     /* 📌 최상단 요소 */
-      pointer-events: none; /* 기본 클릭 막기 */
+    /* ---------------------------------
+    * 3. CHAPTER 2 (chapter2.html 원본)
+    * --------------------------------- */
+    .chapter-2 {
+      background: black;
     }
 
-    /* 개별 버튼만 클릭 가능하게 */
-    .nav-btns a {
-      pointer-events: all;
+    /* 비 배경 */
+    .rain-bg img {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        opacity: 0.45;
+        z-index: 1;
+    }
+
+    /* LOTUS 로고 + 텍스트 블록 */
+    .lotus-block {
+        position: absolute;
+        top: 120px;
+        left: 60px;
+        display: flex;
+        align-items: flex-start;
+        z-index: 10;
+    }
+
+    .lotus-logo {
+        width: 300px;
+        margin-right: 32px;
+    }
+
+    .left-box {
+        width: 500px;
+    }
+
+    /* 포르투갈 사진 + 텍스트 블록 */
+    .portugal-block {
+        position: absolute;
+        right: 60px;
+        bottom: 100px;
+        display: flex;
+        align-items: flex-start;
+        z-index: 10;
+    }
+    .portugal-img {
+        width: 700px;
+        transform: rotate(4deg);
+        margin-right: 60px;
+    }
+
+    /* 블랙 텍스트 박스 */
+    .text-box {
+      margin-top: 20px;
+      max-width: 900px;
+      background: #000;
+      padding: 18px 32px;
+      font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #fff;
+    }
+    /* 챕터 2에서 첫 번째 텍스트 박스의 마진을 제거하여 로고 바로 아래에 위치 */
+    .lotus-block .text-box {
+        margin-top: 0;
+    }
+
+    #typing1, #typing2 {
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      width: auto;
+      line-height: 1.4;
+      white-space: pre-wrap; /* \n 개행 처리 */
+    }
+
+    /* 두 번째(오른쪽) 블랙 박스를 아래로 내리기 */
+    .portugal-block .text-box {
+        transform: translateY(350px);
+        max-width: 400px;
+    }
+
+    .portugal-caption {
+      position: absolute;
+      top: 40%;
+      right: 5%;
+      max-width: 320px;
+      color: white;
+      font-size: 18px;
+      line-height: 1.6;
+      font-weight: 400;
+      z-index: 5;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .portugal-caption .caption-arrow {
+      width: 120px;
+      margin-bottom: 10px;
       display: block;
     }
 
-    /* 버튼 크기 조절 */
-    .nav-btns img {
-      height: 50px;  /* 이미지 크기 조절 */
-      opacity: 0.9;
-      transition: transform .2s, opacity .2s ease;
+
+    /* ===== 챕터2 오버레이 ===== */
+    .chapter2-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transform: translateY(-100%); /* 초기 위치 */
+      display: none; /* JS로 제어하기 위해 숨김 */
+    }
+    /* 애니메이션 상태 */
+    .chapter2-overlay.dropping {
+      display: flex;
+      animation: overlayDrop 0.9s ease-out forwards; 
     }
 
-    /* hover 효과 */
-    .nav-btns img:hover {
-      transform: scale(1.08);
-      opacity: 1;
+    .chapter2-overlay.hide {
+      animation: overlayHide 0.6s ease-in forwards;
     }
-    /* ----- 페이지 전환 효과 ----- */
-    body.page-transition {
+
+    .overlay-inner {
+      position: relative;
+      width: 100%;
+      max-width: 950px;
+      padding: 40px 20px;
+      box-sizing: border-box;
       opacity: 0;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.6s ease-out 0.4s;
     }
+    /* dropping 상태일 때만 애니메이션 적용 */
+    .chapter2-overlay.dropping .overlay-inner {
+        animation: overlayFadeIn 0.6s ease-out 0.4s forwards;
+    }
+
+    .overlay-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .overlay-photo {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      display: block;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .overlay-photo-caption {
+      margin-top: 8px;
+      font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      font-size: 18px;
+      color: #f5f5f5;
+      text-align: center;
+    }
+    .overlay-text-box {
+      margin-top: 20px;
+      max-width: 900px;
+      background: #f1e5d2;
+      padding: 18px 32px;
+      font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+      text-align: center;
+    }
+    .chapter2-overlay .overlay-close {
+        position: absolute;
+        top: 28px;
+        right: 26px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 32px !important;
+        cursor: pointer;
+        z-index: 9999;
+    }
+
+    /* ===== 애니메이션 키프레임 ===== */
+    @keyframes overlayDrop {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+    @keyframes overlayHide {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100%); opacity: 0; }
+    }
+    @keyframes overlayFadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      .overlay-inner { padding: 24px 16px; }
+      .overlay-text-box { padding: 14px 18px; font-size: 14px; }
+      .overlay-photo-caption { font-size: 14px; }
+    }
+
   </style>
 </head>
 <body>
   <audio id="bgAudio" src="audio_rain.mp3" loop></audio>
-  <section id="intro" class="intro-hero">
+
+  <section id="intro" class="section active intro-hero">
     <h1 class="hero-title">ABOUT AYRTON SENNA</h1>
 
     <div class="tv-wrapper">
-      <!-- TV 프레임 -->
       <img
         class="tv-frame"
         src="intro_tv_frame.png"
         alt="Old Panasonic TV"
       />
-
-      <!-- TV 안에 들어갈 GIF -->
       <div class="tv-screen">
         <img
           src="intro_video.gif"
@@ -436,157 +659,322 @@
         />
       </div>
     </div>
-
-    <!-- 플레이 버튼 -->
     <button class="play-btn" id="introPlayBtn">
       <img src="play_btn.png" alt="Play" />
     </button>
   </section>
 
-      <!-- INTRO 아래에 이어지는 첫 번째 화면 -->
-    <section id="chapter-1" class="chapter-one">
-      <<header class="chapter-header">
-      <div class="header-inner">
-        <span class="header-title">
-          레이싱의 시작과 ‘비의 기적’ (1960년 ~ 1985년)
-        </span>
-      </div>
-    </header>
+  <section id="chapter-1" class="section chapter-one">
+      <header class="chapter-header">
+          <div class="header-inner">
+              <span class="header-title">
+                  레이싱의 시작과 ‘비의 기적’ (1960년 ~ 1985년)
+              </span>
+          </div>
+      </header>
 
-      <!-- GIF 레이어 (맨 뒤) -->
       <div class="gif-layer">
-        <img src="ch1_video.gif" alt="" />
+          <img src="ch1_video.gif" alt="" />
       </div>
-
-      <!-- 콜라주 레이어 (중간) -->
       <div class="collage-layer">
-        <img src="ch1_collage.png" alt="콜라주" />
+          <img src="ch1_collage.png" alt="콜라주" />
       </div>
 
-      <!-- 세나 버튼 레이어 (맨 앞) -->
       <button class="senna-cutout-btn">
-        <img src="ch1_click_senna.png" alt="클릭 세나" />
+          <img src="ch1_click_senna.png" alt="클릭 세나" />
       </button>
 
-       <button class="senna-cutout-btn">
-      <img src="/mnt/data/ch1_click_senna.png" alt="세나 컷아웃">
-      
-      </button>
-      <!-- 깜빡이는 CLICK 문구 -->
       <img src="ch1_click.png" class="click-hint" alt="CLICK 힌트">
-      <img src="ch1_brazil.png" alt="브라질 스티커" class="brazil-sticker">
 
-    </section>
-    <!-- 세나 설명 오버레이 -->
-  <div id="sennaOverlay" class="senna-overlay">
-      <div class="overlay-container">
-        <button class="overlay-close">&times;</button>
-
-        <!-- 왼쪽 카드 그대로 -->
-        <img src="ch1_explain.png" class="ov-card" />
-
-        <!-- 오른쪽 영역 전체를 묶는 래퍼 -->
-        <div class="ov-right-area">
-          <!-- 1열: TOLEMAN + 제목 텍스트 -->
-          <div class="ov-row ov-row-top">
-            <img src="ch1_toleman.png" class="ov-toleman" />
-            <span class="ov-title-text">1984년 톨먼에서 F1 데뷔</span>
-          </div>
-
-          <!-- 2열: 모나코 사진 + 본문 텍스트 -->
-          <div class="ov-row ov-row-bottom">
-            <img src="ch1_monaco.png" class="ov-monaco" />
-
-            <div class="ov-text">
-              <h3>폭우 속에 시작된 1984 모나코 그랑프리</h3>
-              <p>
-                폴시드는 알랭 프로스트, 세나는 13위에서 출발했지만 폭우 속에서 놀라운 페이스를 보여주며
-                순위를 빠르게 끌어올린다. 거센 빗줄기 속에서도 카트를 몰던 어린 시절처럼, 그는 물살을
-                가르며 앞차들을 하나씩 추월해 갔다.
-              </p>
-              <p>
-                레이스는 결국 중단되었지만, 세나는 2위라는 결과 이상으로 팬들과 관계자들에게 강렬한
-                인상을 남겼고, 이 경기를 계기로 ‘비의 사나이’라는 별명이 본격적으로 자리잡기 시작했다.
-              </p>
-              <p class="ov-quote">
-                “He's not about to be World Champion this year, he will undoubtedly be World Champion in the future.”  
-                – 제임스 헌트, 1984 모나코 GP 해설 중
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <button class="brazil-sticker-btn">
+          <img src="ch1_brazil.png" alt="브라질 스티커" class="brazil-sticker">
+      </button>
+      <div id="infoOverlay" class="info-overlay">
+        <img src="ch1_info.png" alt="아일톤 세나 기본 정보 카드">
+        <button class="info-close">&times;</button>
     </div>
-    <!-- Navigation Buttons (공통) -->
-  <div class="nav-btns">
-    <a href="chapter0.html" class="btn-back">
-      <img src="btn_back.png" alt="Back">
-    </a>
 
-    <a href="chapter2.html" class="btn-forward">
-      <img src="btn_forward.png" alt="Forward">
-    </a>
+      <div id="sennaOverlay" class="senna-overlay">
+          <div class="overlay-container">
+             <button class="overlay-close">&times;</button>
+              <img src="ch1_explain.png" class="ov-card" />
+              <div class="ov-right-area">
+                  <div class="ov-row ov-row-top">
+                      <img src="ch1_toleman.png" class="ov-toleman" />
+                      <span class="ov-title-text">1984년 톨먼에서 F1 데뷔</span>
+                  </div>
+                  <div class="ov-row ov-row-bottom">
+                      <img src="ch1_monaco.png" class="ov-monaco" />
+                      <div class="ov-text">
+                          <h3>폭우 속에 시작된 1984 모나코 그랑프리</h3>
+                          <p>
+                              폴시드는 알랭 프로스트, 세나는 13위에서 출발했지만 폭우 속에서 놀라운 페이스를 보여주며
+                              순위를 빠르게 끌어올린다. 거센 빗줄기 속에서도 카트를 몰던 어린 시절처럼, 그는 물살을
+                              가르며 앞차들을 하나씩 추월해 갔다.
+                          </p>
+                          <p>
+                              레이스는 결국 중단되었지만, 세나는 2위라는 결과 이상으로 팬들과 관계자들에게 강렬한
+                              인상을 남겼고, 이 경기를 계기로 ‘비의 사나이’라는 별명이 본격적으로 자리잡기 시작했다.
+                          </p>
+                          <p class="ov-quote">
+                              “He's not about to be World Champion this year, he will undoubtedly be World Champion in the future.”
+                              – 제임스 헌트, 1984 모나코 GP 해설 중
+                          </p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <section id="chapter-2" class="section chapter-2">
+      <header class="chapter-header">
+          <div class="header-inner">
+              <span class="header-title">
+                  로터스 시대와 ‘폴 포지션 다수’ 등극 (1985년 ~ 1987년)
+              </span>
+          </div>
+      </header>
+
+      <div class="rain-bg">
+          <img src="ch2_rain.gif" />
+      </div>
+
+      <div class="lotus-block">
+          <img src="ch2_lotus.png" class="lotus-logo"> <div class="text-box left-box">
+              <p id="typing1"></p> </div>
+      </div>
+
+      <div class="portugal-block">
+          <img src="ch2_portu.png" class="portugal-img">
+
+          <div class="text-box">
+              <p id="typing2"></p>
+          </div>
+      </div>
+      <div class="portugal-caption">
+          <img src="ch2_arrow.png" class="caption-arrow">
+          <p>
+              비 내리는 포르투갈 레이스에서 생애 첫 F1 우승을
+              하고 환호하는 세나와 로터스 팀원들
+          </p>
+      </div>
+
+      <div id="chapter2-overlay" class="chapter2-overlay">
+          <div class="overlay-inner">
+              <button class="overlay-close">&times;</button>
+
+              <div class="overlay-content">
+                  <img src="ch2_4drivers.png" alt="86년 포르투갈 그랑프리 네 명의 드라이버"
+                       class="overlay-photo" />
+
+                  <p class="overlay-photo-caption">
+                      86년 포르투갈 그랑프리에서 사진을 같이 찍은 나, 프로스트, 만셀, 피케
+                  </p>
+
+                  <div class="overlay-text-box">
+                      <p>
+                          80년대 초부터 90년대 초까지 이 4명이서 끊임 없이 경쟁하며 챔피언십을
+                          사이 좋게 나눠가졌다.<br />
+                          루이스 해밀턴과 제이미 클락슨이 말한 위대한 시대란 보통 이들의 전성기 시절인
+                          80년대 중반에서 90년대 초를 의미한다.
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  </section> 
+  
+  <section id="chapter-3" class="section">
+      </section>
+
+  <div class="nav-btns">
+      </div>
+
+  <div class="nav-btns">
+      <a href="#" class="btn-back" data-target="prev">
+          <img src="btn_back.png" alt="Back">
+      </a>
+      <a href="#" class="btn-forward" data-target="next">
+          <img src="btn_forward.png" alt="Forward">
+      </a>
   </div>
+
   <script>
       const playBtn = document.querySelector("#introPlayBtn");
       const intro = document.getElementById("intro");
       const chapter1 = document.getElementById("chapter-1");
       const bgAudio = document.getElementById("bgAudio");
-      const sticker = document.querySelector(".brazil-sticker");
+      
+      // ★ 스티커 등장 및 클릭 이벤트 제어 요소 (brazil-sticker-btn)
+      const sticker = document.querySelector(".brazil-sticker-btn"); 
 
-      // 🎵 오디오 페이드인
-      function fadeInAudio(audioEl, duration) {
-        if (!audioEl) return;
-
-        const targetVolume = 0.8;
-        const stepTime = 80;
-        const steps = duration / stepTime;
-        const volumeStep = targetVolume / steps;
-
-        audioEl.volume = 0;
-        audioEl.play().catch(() => {
-          console.log("Audio play blocked by browser.");
-        });
-
-        const fade = setInterval(() => {
-          let v = audioEl.volume + volumeStep;
-          if (v >= targetVolume) {
-            audioEl.volume = targetVolume;
-            clearInterval(fade);
-          } else {
-            audioEl.volume = v;
-          }
-        }, stepTime);
-      }
-
-      // ⭐ 인트로 → 챕터1 전환 + 오디오 + 스티커
-      playBtn.addEventListener("click", () => {
-        // 1) 인트로 페이드아웃
-        intro.classList.add("hidden");
-
-        setTimeout(() => {
-          intro.style.display = "none";
-
-          // 2) 챕터1 보이게
-          chapter1.classList.add("active", "visible");
-          window.scrollTo({ top: 0, behavior: "auto" });
-
-          // 3) 오디오 페이드인
-          fadeInAudio(bgAudio, 8000);
-
-          // 4) 브라질 스티커 등장
-          setTimeout(() => {
-            sticker.classList.add("active");
-          }, 300);
-        }, 500);
-      });
-
-      // ⭐ 세나 오버레이
+      // ⭐ 세나 오버레이 관련 변수 (기존 큰 오버레이)
       const sennaBtn = document.querySelector(".senna-cutout-btn");
       const sennaOverlay = document.getElementById("sennaOverlay");
-      const overlayClose = document.querySelector(".overlay-close");
+      const overlayClose = sennaOverlay ? sennaOverlay.querySelector(".overlay-close") : null;
 
+      // ★ 새로운 정보 오버레이 관련 변수 (작은 오버레이)
+      const infoOverlay = document.getElementById("infoOverlay");
+      const infoCloseBtn = document.querySelector(".info-close");
+      
+      // ⭐ 챕터 2 관련 변수 (섹션 전환용)
+      const chapter2 = document.getElementById("chapter-2");
+      const chapter2Overlay = document.getElementById("chapter2-overlay");
+      const chapter2OverlayClose = chapter2Overlay ? chapter2Overlay.querySelector(".overlay-close") : null;
+      
+      // 챕터 2 타이핑 텍스트 및 변수
+      const text1 = "다음 시즌, 세나는 불만이 많았던 톨먼을 박차고 나와\n테스트 때부터 자신을 원했던 로터스와 장기계약을 맺게 된다.";
+      const text2 ="비록 챔피언 타이틀은 얻지 못했지만,1986년과 1987년 시즌 모두 드라이버 순위 4위를 기록하며\n월드 챔피언에 도전할 만한 강력한 선수임을 입증했다.";
+      let i = 0, j = 0;
+
+      const chapter3 = document.getElementById("chapter-3");
+
+
+      // ----------------------------------------------------
+      // I. 핵심 유틸리티 함수 (오디오, 섹션 전환)
+      // ----------------------------------------------------
+
+      function switchSection(nextSection, onTransitionEnd) {
+          const currentSection = document.querySelector('.section.active');
+          
+          document.body.classList.add("page-transition");
+
+          setTimeout(() => {
+              if (currentSection) {
+                  currentSection.classList.remove('active');
+                  currentSection.style.display = 'none';
+              }
+              nextSection.classList.add('active');
+              nextSection.style.display = 'block';
+
+              document.body.classList.remove("page-transition");
+
+              if (onTransitionEnd) {
+                  onTransitionEnd();
+              }
+          }, 600);
+      }
+      
+      function fadeInAudio(audioEl, duration) {
+          if (!audioEl) return;
+          const targetVolume = 0.8;
+          const stepTime = 80;
+          const steps = duration / stepTime;
+          const volumeStep = targetVolume / steps;
+
+          audioEl.volume = 0;
+          audioEl.play().catch(() => { console.log("Audio play blocked."); });
+
+          const fade = setInterval(() => {
+              let v = audioEl.volume + volumeStep;
+              if (v >= targetVolume) {
+                  audioEl.volume = targetVolume;
+                  clearInterval(fade);
+              } else {
+                  audioEl.volume = v;
+              }
+          }, stepTime);
+      }
+
+      function fadeOutAudio(audioEl, duration, callback) {
+          if (!audioEl || audioEl.volume === 0) return callback();
+          const stepTime = 60; 
+          const steps = duration / stepTime;
+          const volumeStep = audioEl.volume / steps;
+
+          const fade = setInterval(() => {
+              let newVol = audioEl.volume - volumeStep;
+              if (newVol <= 0) {
+                  audioEl.volume = 0;
+                  audioEl.pause();
+                  clearInterval(fade);
+                  if (callback) callback();
+              } else {
+                  audioEl.volume = newVol;
+              }
+          }, stepTime);
+      }
+
+
+      // ----------------------------------------------------
+      // II. 챕터 2 관련 로직 (타이핑 및 오버레이)
+      // ----------------------------------------------------
+
+      function showChapter2Overlay() {
+          if (!chapter2Overlay) return;
+          chapter2Overlay.style.display = 'flex';
+          chapter2Overlay.style.transform = 'translateY(-100%)'; 
+          chapter2Overlay.classList.remove('hide');
+          chapter2Overlay.classList.remove('dropping'); 
+          chapter2Overlay.classList.add('dropping');
+      }
+
+      // index.html - <script> 섹션 내부 (closeChapter2Overlay 함수)
+
+      function closeChapter2Overlay() {
+          if (!chapter2Overlay) return;
+          chapter2Overlay.classList.add("hide");
+          chapter2Overlay.classList.remove("dropping");
+          
+          // ▼ [수정] 0.6초 애니메이션이 끝난 후 0.05초의 여유를 두고 display: none 처리
+          setTimeout(() => {
+              chapter2Overlay.style.display = 'none';
+              chapter2Overlay.classList.remove("hide");
+              chapter2Overlay.style.transform = 'translateY(-100%)'; 
+          }, 650); // 0.6초 + 50ms (여유 시간)
+      }
+      
+      function type1() {
+          if (i < text1.length) {
+              document.getElementById("typing1").textContent += text1.charAt(i);
+              i++;
+              setTimeout(type1, 28);
+          } else {
+              setTimeout(type2, 400);
+          }
+      }
+
+      function type2() {
+          if (j < text2.length) {
+              document.getElementById("typing2").textContent += text2.charAt(j);
+              j++;
+              setTimeout(type2, 28);
+          } else {
+              setTimeout(showChapter2Overlay, 500); 
+          }
+      }
+
+      function activateChapter2() {
+          i = 0; j = 0;
+          document.getElementById("typing1").textContent = "";
+          document.getElementById("typing2").textContent = "";
+          type1();
+      }
+
+      // ⭐ 챕터 3 활성화 시 초기화 함수
+      function activateChapter3() {
+          // 챕터 3 섹션이 활성화될 때 필요한 로직을 여기에 넣습니다.
+          console.log("Chapter 3 Activated. Start typing/animation.");
+      }
+
+
+      // ----------------------------------------------------
+      // III. 이벤트 리스너 설정
+      // ----------------------------------------------------
+
+      // 1. 인트로 Play 버튼 클릭: 오디오 시작 및 챕터 1 전환
+      playBtn.addEventListener("click", () => {
+        fadeInAudio(bgAudio, 8000);
+        switchSection(chapter1, () => {
+          setTimeout(() => {
+            if (sticker) sticker.classList.add("active");
+          }, 300);
+        });
+      });
+
+      // 2. 세나 컷아웃 버튼 클릭: 큰 오버레이 열기
       if (sennaBtn) {
         sennaBtn.addEventListener("click", () => {
           sennaOverlay.classList.add("visible");
@@ -594,65 +982,127 @@
         });
       }
 
-      if (overlayClose) {
-        overlayClose.addEventListener("click", () => {
-          sennaOverlay.classList.remove("visible");
-          document.body.classList.remove("overlay-open");
-        });
+      // 3. 브라질 스티커 클릭: 작은 정보 오버레이 토글
+      if (sticker && infoOverlay) {
+          sticker.addEventListener("click", () => {
+              infoOverlay.classList.toggle("visible");
+              document.body.classList.toggle("info-open", infoOverlay.classList.contains("visible"));
+          });
       }
 
-      // 배경 클릭으로 닫기
-      sennaOverlay.addEventListener("click", (e) => {
-        if (e.target === sennaOverlay) {
-          sennaOverlay.classList.remove("visible");
-          document.body.classList.remove("overlay-open");
-        }
-      });
+      // 4. 정보 오버레이 닫기 버튼 클릭
+      if (infoCloseBtn) {
+          infoCloseBtn.addEventListener("click", () => {
+              infoOverlay.classList.remove("visible");
+              document.body.classList.remove("info-open");
+          });
+      }
 
-      // ⭐ 페이지 이동: 페이드아웃 효과
+      // 5. 큰 오버레이 닫기 (X 버튼 및 배경 클릭)
+      if (sennaOverlay) {
+          sennaOverlay.addEventListener("click", (e) => {
+              if (e.target === sennaOverlay || e.target === overlayClose) {
+                  sennaOverlay.classList.remove("visible");
+                  document.body.classList.remove("overlay-open");
+              }
+          });
+      }
+
+      // 6. 챕터 2 오버레이 닫기 (X 버튼 및 배경 클릭)
+      if (chapter2Overlay) {
+          chapter2Overlay.addEventListener("click", (e) => {
+              if (e.target === chapter2Overlay || e.target === chapter2OverlayClose) {
+                  closeChapter2Overlay();
+              }
+          });
+      }
+      
+      // 7. 네비게이션 버튼 이벤트 처리 (SPA 전환)
       const forwardBtn = document.querySelector(".btn-forward");
       const backBtn = document.querySelector(".btn-back");
+
+      // index.html - <script> 섹션 내부 (forwardBtn 이벤트 리스너)
+
+      // index.html - <script> 섹션 내부 (forwardBtn 이벤트 리스너)
 
       if (forwardBtn) {
         forwardBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          document.body.classList.add("page-transition");
-          setTimeout(() => {
-            window.location.href = "chapter2.html";
-          }, 600);
+          document.body.classList.add("page-transition"); // 전환 효과를 위해 페이드아웃 시작
+          
+          // 현재 활성화된 섹션을 찾습니다.
+          const currentSection = document.querySelector('.section.active');
+          
+          if (currentSection === chapter1) {
+            // Chapter 1 -> Chapter 2 (단일 파일 내 섹션 전환 유지)
+            switchSection(chapter2, activateChapter2);
+          } 
+          // ▼ [수정] Chapter 2 -> chapter3.html 파일로 이동 (연결) ▼
+          else if (currentSection === chapter2) {
+            setTimeout(() => {
+              // 브라우저를 새로운 파일로 이동시킵니다.
+              window.location.href = "chapter3.html"; 
+            }, 600); // 0.6초 페이드아웃 후 이동
+          }
         });
       }
 
       if (backBtn) {
         backBtn.addEventListener("click", (e) => {
           e.preventDefault();
-          document.body.classList.add("page-transition");
-          setTimeout(() => {
-            window.location.href = "chapter0.html";
-          }, 600);
+          
+          const currentSection = document.querySelector('.section.active');
+          
+          if (currentSection === chapter1) {
+              // Chapter 1 -> 인트로: 오디오 Fade Out
+              fadeOutAudio(bgAudio, 600, () => {
+                  switchSection(intro);
+              });
+          } else if (currentSection === chapter2) {
+              // Chapter 2 -> Chapter 1: 오디오 유지
+              closeChapter2Overlay(); // 챕터 2 오버레이 닫기
+              switchSection(chapter1);
+          }
         });
       }
+      
 
-      function fadeOutAudio(audioEl, duration, callback) {
-      if (!audioEl) return callback();
+      // index.html 스크립트 내부 (가장 하단)
 
-      const stepTime = 60; 
-      const steps = duration / stepTime;
-      const volumeStep = audioEl.volume / steps;
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetSection = urlParams.get('section');
+        
+        // 1. URL에 'section=chapter2' 파라미터가 있는지 확인
+        if (targetSection === 'chapter2') {
+            const chapter2 = document.getElementById('chapter-2');
 
-      const fade = setInterval(() => {
-        let newVol = audioEl.volume - volumeStep;
-        if (newVol <= 0) {
-          audioEl.volume = 0;
-          clearInterval(fade);
-          if (callback) callback();  
-        } else {
-          audioEl.volume = newVol;
+            // ★ 인트로 대신 Chapter 2를 활성화하고, 인트로는 숨깁니다.
+            if (chapter2) {
+                // 인트로의 active 클래스를 제거하고, Chapter 2를 활성화합니다.
+                // switchSection 함수가 active 클래스 전환을 처리하도록 합니다.
+                
+                // Note: window.onload 시점에서는 switchSection의 transition 효과를 피하고 즉시 전환해야 함
+                
+                // 기존 active 요소를 찾아 제거
+                const currentActive = document.querySelector('.section.active');
+                if (currentActive) {
+                    currentActive.classList.remove('active');
+                    currentActive.style.display = 'none';
+                }
+
+                // Chapter 2를 활성화하고 초기화 로직 실행
+                chapter2.classList.add('active');
+                chapter2.style.display = 'block';
+                activateChapter2(); 
+                return; 
+            }
         }
-      }, stepTime);
-    }
-
-    </script>
-
+        
+        // 2. 파라미터가 없거나 처리되지 않았다면, 기존대로 인트로를 활성화
+        intro.classList.add("active");
+        intro.style.display = 'block';
+    };
+  </script>
 </body>
 </html>

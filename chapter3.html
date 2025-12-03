@@ -176,6 +176,65 @@
       z-index: 2;
       transition-delay: 1s
     }
+    /* chapter3.html - <style> 섹션 내부에 추가 */
+
+    /* ▼ [3] 프로스트 카드 컨테이너 스타일 ▼ */
+    .prost-card-container {
+        position: absolute;
+        right: 5%; 
+        bottom: 14%; 
+        width: 420px; 
+        background: #000;
+        border: 3px solid #000; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 10;
+        padding: 0px;
+        opacity: 0; /* 투명하게 숨김 */
+        pointer-events: none; /* 클릭 이벤트 비활성화 */
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+    .prost-card-container.visible {
+        opacity: 1; /* 등장 시 보이게 함 */
+        pointer-events: all; /* 클릭 이벤트 활성화 */
+        transform: translateY(0);
+    }
+
+    .prost-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        /* 이미지 리스트를 담을 영역 (슬라이드 구현을 위해) */
+    }
+
+    .prost-photo {
+        width: 100%;
+        height: auto;
+        display: block;
+        padding: 0px;
+        transition: transform 0.3s ease-in-out; /* 슬라이드 애니메이션 */
+    }
+
+    /* ▼ [4] 슬라이드 버튼 스타일 ▼ */
+    .prost-nav-buttons {
+        display: flex;
+        justify-content: center;
+        padding: 4px 0;
+        background: #000; /* 하단 검정 바 */
+    }
+
+    .nav-arrow {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 15px;
+        padding: 5px 10px;
+        transition: color 0.1s;
+    }
+
+    .nav-arrow:hover {
+        color: #ff0000; /* 호버 색상 (예시) */
+    }
 
     /* 위로 슬라이드 인될 때 상태 */
     .rivalry-scene.show {
@@ -226,19 +285,23 @@
       filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
     }
 
+    /* chapter3.html - <style> 섹션 내, .video-overlay 규칙 */
     .video-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);   /* 뒤에 까는 반투명 블랙 */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transition: opacity 0.3s ease;
-      flex-direction: column;
-      opacity: 0;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        /* ▼ [수정] 수직 중앙 정렬로 복원 ▼ */
+        display: flex;
+        
+        align-items: center; /* 수평 정렬 */
+        justify-content: flex-start; /* 수직 정렬을 상단으로 변경 */
+        padding-top: 80px; /* 화면 상단에서 50px 여백 확보 */ 
+
+        opacity: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+        flex-direction: column; /* 요소들을 수직으로 배치 */
     }
 
     .video-overlay.visible {
@@ -251,7 +314,12 @@
       max-width: 900px;
       width: 80vw;
       box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-    }
+      
+      /* 비디오가 캡션과 Next 버튼을 수용하도록 높이를 확보 */
+      display: flex;
+      flex-direction: column;
+  }
+    
 
     .video-inner video {
       width: 100%;
@@ -379,6 +447,36 @@
       width: 440px;
       transform: rotate(-5deg);
     }
+    /* chapter3.html - <style> 섹션 내부에 추가 */
+
+    /* ▼ [2] 비디오 해설 캡션 스타일 ▼ */
+    .video-caption-box {
+        color: #333;
+        max-width: 900px;
+        padding: 15px 20px;
+        font-size: 15px;
+        line-height: 1.5;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        background: rgba(255, 255, 255, 0.9);
+        margin-top: 30px;
+        position: center;
+        
+        /* 처음에는 숨김 (비디오 재생 버튼 누를 때 나타나게 할 경우) */
+        opacity: 0; 
+        transition: opacity 0.5s ease;
+      
+    }
+
+    .video-caption-box.show {
+        opacity: 1;
+    }
+    /* chapter3.html - <style> 섹션 내, .video-footer 규칙 */
+    .video-footer {
+        margin-top: 15px; /* 캡션 박스와의 간격 확보 */
+        display: flex;
+        justify-content: center;
+    }
 
    
   </style>
@@ -411,6 +509,19 @@
         <strong>첫 챔피언 (1988년)</strong>
         <span id="infoBottomText"></span>
       </div>
+      <button id="nextSceneBtn" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 100; padding: 10px 20px; font-size: 16px; background: #fff; color: #000; border: none; cursor: pointer; display: none;">
+    다음 장면 ▶
+    </button>
+    <div class="prost-card-container">
+        <div class="prost-image-wrapper">
+            <img id="prostImage" src="ch3_prost1.png" alt="알랭 프로스트 사진" class="prost-photo">
+        </div>
+        
+        <div class="prost-nav-buttons">
+            <button id="prostPrevBtn" class="nav-arrow prev">◀</button>
+            <button id="prostNextBtn" class="nav-arrow next">▶</button>
+        </div>
+    </div>
     </section>
     <section class="rivalry-scene">
       <div class="rivalry-card">
@@ -423,10 +534,20 @@
       </div>
       <!-- 🎬 비디오 오버레이 -->
     <div id="videoOverlay" class="video-overlay">
-      <div class="video-inner">
+      
+      <div class="video-inner"> 
         <button class="video-close">&times;</button>
         <video id="rivalryVideo" src="ch3_suzuka.mp4" controls></video>
+        
+        <div id="videoCaption" class="video-caption-box">
+            <p>
+                1989년 스즈카 그랑프리는 세나와 프로스트의 챔피언십을 결정짓는 레이스였다.<br>
+                당시 레이스를 지배하던 프로스트를 따라잡기 위해 세나는 무리한 추월을 시도했고, 이 충돌로 인해 프로스트는 리타이어하였고 세나는 다시 출발을 하게 되면서 1위로 들어온 것처럼 보였다.
+            </p>
+        </div>
+        
       </div>
+
           <!-- ▶ 비디오 아래 next 버튼 -->
       <div class="video-footer">
       <button class="btn-next-scene">
@@ -440,10 +561,10 @@
     <!-- ▶ 마지막 스즈카 장면 오버레이 -->
     <div class="final-scene-overlay" id="finalScene">
       <div class="final-scene">
-      <img class="final-map" src="ch3_suzuka_map.png" alt="Suzuka map">
+      <img class="final-map" src="ch3_suzuka_map.png" alt="Suzuka map"> -->
 
         <div class="final-info-card">
-          결론적으로는 세나가 실격 처리되면서 프로스트가 챔피언을
+          하지만 결론적으로는 세나가 실격 처리되면서 프로스트가 챔피언을
           차지하게 되었고, 이 사건은 F1 역사상 가장 논란이 많은 순간
           중 하나로 기록된다.
         </div>
@@ -452,7 +573,7 @@
 
     <!-- back / forward 버튼 -->
     <div class="nav-btns">
-      <a href="chapter2.html" class="btn-back">
+      <a href="index.html" class="btn-back">
         <img src="btn_back.png" alt="back">
       </a>
       <a href="chapter4.html" class="btn-forwards">
@@ -474,6 +595,9 @@
 
     const infoTopEl = document.getElementById("infoTopText");
     const infoBottomEl = document.getElementById("infoBottomText");
+    const nextSceneBtn = document.getElementById("nextSceneBtn"); // 새로 추가된 버튼 변수
+    // ▼ [3] 새로운 캡션 요소 변수 추가 (스크립트 상단에 추가) ▼
+    const videoCaptionBox = document.getElementById("videoCaption");
 
     bgm.volume = 0;
 
@@ -574,19 +698,36 @@
 
       startTypingSound();
 
-      typeText(infoTopEl, infoTopFull, 180, () => {
+      typeText(infoTopEl, infoTopFull, 120, () => {
         setTimeout(() => {
           bottomBox.style.opacity = 1;
           bottomBox.style.transform = "translateY(0)";
 
-          typeText(infoBottomEl, infoBottomFull, 180, () => {
+          typeText(infoBottomEl, infoBottomFull, 120, () => {
             stopTypingSound();
 
-            mclarenScene.classList.add("slide-up");
-            rivalryScene.classList.add("show");
+           if (nextSceneBtn) {
+                   nextSceneBtn.style.display = 'block';}
+            if (prostCardContainer) {
+                    prostCardContainer.classList.add('visible');
+                }
+
           });
         }, 350);
       });
+    }
+    // chapter3.html - <script> 섹션 내부 (스크립트 하단에 추가)
+
+    if (nextSceneBtn) {
+        nextSceneBtn.addEventListener("click", () => {
+            nextSceneBtn.style.display = 'none'; // 버튼 숨기기
+            
+            // 버튼을 눌렀을 때만 rivalry-scene이 올라오도록 처리
+            if (mclarenScene && rivalryScene) {
+                mclarenScene.classList.add("slide-up"); // 기존 배경을 위로 올리고 어둡게
+                rivalryScene.classList.add("show");     // 라이벌 장면을 아래에서 위로 오버랩
+            }
+        });
     }
 
     /* ================================
@@ -640,6 +781,8 @@
         videoOverlay.classList.add("visible");
         rivalryVideo.currentTime = 0;
         rivalryVideo.play();
+        // ▼ [수정/추가] 캡션 박스 노출 ▼
+        if (videoCaptionBox) videoCaptionBox.classList.add("show");
       }, 600);
     });
 
@@ -648,7 +791,8 @@
       rivalryVideo.pause();
       rivalryVideo.currentTime = 0;
       videoOverlay.classList.remove("visible");
-    }
+      if (videoCaptionBox) videoCaptionBox.classList.remove("show");
+  }
 
     /* X 버튼 */
     videoCloseBtn.addEventListener("click", closeVideo);
@@ -665,6 +809,99 @@
       closeVideo();                  // 영상 닫기
       finalScene.classList.add("visible");  // 스즈카 화면 열기
     });
+
+    // chapter3.html - <script> 섹션 내부 (상단 변수 선언 부분)
+
+    // ▼ [5] 프로스트 슬라이드 관련 변수 추가 ▼
+    const prostImageEl = document.getElementById("prostImage");
+    const prostPrevBtn = document.getElementById("prostPrevBtn");
+    const prostNextBtn = document.getElementById("prostNextBtn");
+
+    // 이미지 목록 (추가할 이미지 파일명을 여기에 나열하세요)
+    const prostImages = [
+        "ch3_prost1.png", 
+        "ch3_prost2.png","ch3_prost3.png","ch3_prost4.png"  //
+        // 필요한 다른 이미지 파일명도 여기에 추가
+    ];
+    let currentProstIndex = 0;
+
+
+    // ▼ [6] 슬라이드 기능 함수 ▼
+    function updateProstImage(direction) {
+        // direction: 1 for next, -1 for previous
+        currentProstIndex += direction;
+
+        if (currentProstIndex < 0) {
+            currentProstIndex = prostImages.length - 1; // 끝에서 처음으로
+        } else if (currentProstIndex >= prostImages.length) {
+            currentProstIndex = 0; // 처음에서 끝으로
+        }
+
+        // 이미지 경로 업데이트
+        if (prostImageEl) {
+            prostImageEl.src = prostImages[currentProstIndex];
+        }
+    }
+
+
+    // ▼ [7] 버튼 이벤트 리스너 추가 ▼
+    if (prostPrevBtn) {
+        prostPrevBtn.addEventListener("click", () => {
+            updateProstImage(-1);
+        });
+    }
+
+    if (prostNextBtn) {
+        prostNextBtn.addEventListener("click", () => {
+            updateProstImage(1);
+        });
+    }
+    // chapter3.html - <script> 섹션 내부 (가장 하단)
+
+    // ... (기존 스크립트 코드) ...
+    
+    // 네비게이션 버튼 요소 선택 (href 링크 대신 JS로 제어하기 위함)
+    const navBackBtn = document.querySelector(".btn-back");
+    const navForwardBtn = document.querySelector(".btn-forwards");
+
+
+    // 1. BACK 버튼 클릭 이벤트 수정 (index.html로 이동, 파일 연결 유지)
+    if (navBackBtn) {
+        navBackBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            // BGM 페이드 아웃 (index.html로 이동 시 BGM이 끊기지 않게 하려면)
+            fadeOutMusic(600); 
+
+            // 0.6초 페이드아웃 후 index.html로 이동 (Chapter 2 섹션으로 지정)
+            setTimeout(() => {
+                 // **index.html의 Chapter 2 섹션으로 이동하도록 쿼리 파라미터 사용**
+                 window.location.href = "index.html?section=chapter2"; 
+            }, 600); 
+        });
+    }
+
+    // 2. FORWARD 버튼 클릭 이벤트 수정 (chapter4.html로 이동, 파일 연결 유지)
+    if (navForwardBtn) {
+        navForwardBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            // BGM 페이드 아웃 (chapter4.html로 이동 시 BGM이 끊기지 않게 하려면)
+            fadeOutMusic(600); 
+
+            // 0.6초 페이드아웃 후 chapter4.html로 이동
+            setTimeout(() => {
+                 window.location.href = "chapter4.html"; 
+            }, 600);
+        });
+    }
+    // index.html - <script> 섹션 내부 (startTypingSequence 함수 내부)
+
+    // ▼ [추가] 프로스트 카드 컨테이너 변수 선언 (스크립트 상단 변수 선언부에 추가) ▼
+    const prostCardContainer = document.querySelector(".prost-card-container");
+
+   
+    </script>
    
     </script>
 </body>
